@@ -45,6 +45,9 @@ int main(void)
 	int rtnBajaProducto;
 	int rtnBajaUsuario;
 	int rtnListarTrackings;
+	int opcionUsuarioVentas;
+	int rtnReponerStock;
+	int rtnFiltrarNombre;
 rel_cargaForzada(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, arrayTrackings, CANT_TRACKINGS);
 	do
 	{
@@ -81,7 +84,7 @@ rel_cargaForzada(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, a
 							continuarMenuAdmin=0;//REINICIO VARIABLE
 							if(utn_getInt(&opcionAdmin, "\n*************************\n**1er EXAMEN LAB I - 1H **\n**********ADMIN*********\n"
 								"**************************\n1.LISTAR ESTADO DE LOS USUARIOS.\n2.LISTAR PRODUCTOS POR CATEGORIA."
-								"\n3.BAJA DE UN PRODUCTO.\n4.BAJA DE UN USUARIO\n5.TRACKING GLOBAL\n0.SALIR","\nError opcion no valida", 0, 5, 5)==0)
+								"\n3.BAJA DE UN PRODUCTO.\n4.BAJA DE UN USUARIO\n5.TRACKING GLOBAL\n6.FILTRAR POR NOMBRE DE PRODUCTO\n0.SALIR","\nError opcion no valida", 0, 6, 5)==0)
 							{
 								switch(opcionAdmin)
 								{
@@ -216,6 +219,35 @@ rel_cargaForzada(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, a
 										}
 									}
 									break;
+								case 6:
+								//FILTRAR PRODUCTOS POR NOMBRE
+								rtnFiltrarNombre=eProducto_FiltrarNombre(arrayProductos, CANT_PRODUCTOS);
+								{
+									if(rtnFiltrarNombre>=0)
+									{
+										puts("\nFIN DEL LISTADO.");
+									}
+									else
+									{
+										if(rtnFiltrarNombre==-5 || rtnFiltrarNombre==-4)
+										{
+											puts("\nLa busqueda no arrojo resultados.");
+										}
+										else
+										{
+											if(rtnFiltrarNombre==-3)
+											{
+												puts("\nNo existen productos para buscar.");
+											}
+											else
+											{
+												puts("\nERROR(2-1), en la carga.");
+											}
+										}
+
+									}
+								}
+								break;
 								}
 							}
 						}while(continuarMenuAdmin==0);
@@ -269,34 +301,80 @@ rel_cargaForzada(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, a
 									}
 									break;
 								case 2:	//VENDER (ALTA PRODUCTO)
-									do
-									{
 
-										rtnAltaProducto=eProducto_Alta(arrayProductos, CANT_PRODUCTOS,arrayUsuarios, CANT_PRODUCTOS,indiceUsuarioActual);
-										if(rtnAltaProducto>=0)
+										if(utn_getInt(&opcionUsuarioVentas, "\nSELECCIONE OPCION QUE DESEE.\n1.VENDER UN PRODUCTO"
+											"\n2.REPONER STOCK\n3.SALIR","\nError opcion no valida", 0, 2, 5)==0)
 										{
-											puts("\nCARGA DE PRODUCTO EXITOSA!");
-										}
-										else
-										{
-											if(rtnAltaProducto==-3)
+											switch(opcionUsuarioVentas)
 											{
-												puts("\nERROR(3), lista de productos llena.");
-											}
-											else
-											{
-												if(rtnAltaProducto==-4)
+											case 0: //SALIR
+												continuarAltaProducto=0;
+												break;
+											case 1: //ALTA PRODUCTO
+												do
 												{
-													puts("\nAlta cancelada.");
+													rtnAltaProducto=eProducto_Alta(arrayProductos, CANT_PRODUCTOS,arrayUsuarios, CANT_PRODUCTOS,indiceUsuarioActual);
+													if(rtnAltaProducto>=0)
+													{
+														puts("\nCARGA DE PRODUCTO EXITOSA!");
+													}
+													else
+													{
+														if(rtnAltaProducto==-3)
+														{
+															puts("\nERROR(3), lista de productos llena.");
+														}
+														else
+														{
+															if(rtnAltaProducto==-4)
+															{
+																puts("\nAlta cancelada.");
+															}
+															else
+															{
+																puts("\nERROR(2-1), en la carga.");
+															}
+														}
+													}
+													utn_getInt(&continuarAltaProducto, "¿Desea dar de alta otro producto? SI(1) -- NO (0)", "ERROR, opcion no valida", 0, 1, 5);
+												}while(continuarAltaProducto==1);
+												break;
+											case 2: //REPONER STOCK
+												rtnReponerStock=rel_ReponerStock(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, arrayTrackings, CANT_TRACKINGS, indiceUsuarioActual);
+												if(rtnReponerStock==0)
+												{
+													puts("\nINGRESO DE STOCK EXITOSO!.");
 												}
 												else
 												{
-													puts("\nERROR(2-1), en la carga.");
+													if(rtnReponerStock==-5)
+													{
+														puts("\nERROR, en ingreso de datos de stock por favor vuelva a intentar");
+													}
+													else
+													{
+														if(rtnReponerStock==-4)
+														{
+															puts("\nError ID invalido o no existe.");
+														}
+														else
+														{
+															if(rtnReponerStock==-3)
+															{
+																puts("\nEl usuario no publico productos al momento.");
+															}
+															else
+															{
+																puts("\nERROR(1-2), en la carga.");
+															}
+														}
+
+													}
+
 												}
+												break;
 											}
 										}
-										utn_getInt(&continuarAltaProducto, "¿Desea dar de alta otro producto? SI(1) -- NO (0)", "ERROR, opcion no valida", 0, 1, 5);
-									}while(continuarAltaProducto==1);
 									break;
 								case 3://ESTADO COMPRAS
 										rtnEstadoCompras=rel_EstadoCompras(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, arrayTrackings, CANT_TRACKINGS, indiceUsuarioActual);
@@ -349,7 +427,7 @@ rel_cargaForzada(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, a
 										}
 										break;//BREAK 4.A.
 									case 2: //LISTADO DE PRODUCTOS EN VENTA
-										rtnEstadoVentasCase2=rel_ImprimirProductos(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, arrayTrackings, CANT_TRACKINGS, indiceUsuarioActual);
+										rtnEstadoVentasCase2=rel_ImprimirProductos(arrayUsuarios, CANT_USUARIOS, arrayProductos, CANT_PRODUCTOS, arrayTrackings, CANT_TRACKINGS, indiceUsuarioActual,1);
 										if(rtnEstadoVentasCase2==0)
 										{
 											puts("\nFIN DEL LISTADO.");

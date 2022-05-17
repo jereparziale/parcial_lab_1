@@ -32,10 +32,12 @@ int rel_ImprimirCompras(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayP
 //A LISTADO VENTAS FINALZIDAS
 int rel_ImprimirVentas(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayProductos[], int tam_productos,Tracking arrayTrackings[], int tam_trackings, int FK_idComprador);
 //B LISTADO PRODUCTOS A LA VENTA
-int rel_ImprimirProductos(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayProductos[], int tam_productos,Tracking arrayTrackings[], int tam_trackings, int FK_idVendedor);
+int rel_ImprimirProductos(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayProductos[], int tam_productos,Tracking arrayTrackings[], int tam_trackings, int FK_idVendedor, int conStock_1_SI_0_NO);
 
 //BAJA USUARIO Y SUS PRODUCTOS
 int rel_Usuario_Baja(Usuario arrayUsuarios[], int tam_arrayUsuarios,Producto arrayProductos[], int tam_productos);
 
+//REPONER STOCK
+int rel_ReponerStock(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayProductos[], int tam_productos,Tracking arrayTrackings[], int tam_trackings, int FK_idVendedor);
 
 #endif /* REL_TRACKING_PRODUCTO_H_ */

@@ -5,6 +5,33 @@
 
 //Cabecera de las funciones utn generales
 
+
+//FUNCION IMPRIMIR UN MENSAJE
+/// @fn char utn_printfString(char*)
+/// @brief funcion de imprimir un mensaje por medio de un printf por string
+///
+/// @pre
+/// @post
+/// @param mensaje mensaje a imprimir
+/// @return 0
+char utn_printfString(char* mensaje);
+
+//FUNCION DE TOMA DE ENTEROS
+/// @fn int utn_getInt(int*, char*, char*, int, int, int)
+/// @brief toma un numero de tipo int segun un maximo y un minimo, valida y caso contrario se especifica
+/// un mensaje de error y una cantidad de reintentos
+/// @pre
+/// @post
+/// @param pResultado	resultado de la funcion, puntero, numero int ingresado
+/// @param mensaje mensaje antes de pedir el numero
+/// @param mensajeError mensaje en caso de que lo que ingrese el usuario no pase las validaciones
+/// @param minimo numero int minimo para ingresar
+/// @param maximo numero int maximo para ingresar
+/// @param reintentos cantidad de intentos en caso de no pasar las validaciones
+/// @return retorna -1 en caso de no cumplir con las validaciones en la cantidad de reintentos y 0 en caso positivo
+int utn_getInt(int* pResultado, char* mensaje, char* mensajeError, int minimo, int maximo, int reintentos);
+
+
 //CONVERTIR MINUSCULAS A MAYUSCULAS
 int cambiarMinusMayus(char pArray[], int tam);
 
@@ -40,33 +67,6 @@ char utn_getPassword(char pResultado[], char* mensaje, char* mensajeError, int t
 
 char getPassword(char* pStringTomado, int tam, int tam_minimo);
 
-
-
-//FUNCION IMPRIMIR UN MENSAJE
-/// @fn char utn_printfString(char*)
-/// @brief funcion de imprimir un mensaje por medio de un printf por string
-///
-/// @pre
-/// @post
-/// @param mensaje mensaje a imprimir
-/// @return 0
-char utn_printfString(char* mensaje);
-
-//FUNCION DE TOMA DE ENTEROS
-/// @fn int utn_getInt(int*, char*, char*, int, int, int)
-/// @brief toma un numero de tipo int segun un maximo y un minimo, valida y caso contrario se especifica
-/// un mensaje de error y una cantidad de reintentos
-/// @pre
-/// @post
-/// @param pResultado	resultado de la funcion, puntero, numero int ingresado
-/// @param mensaje mensaje antes de pedir el numero
-/// @param mensajeError mensaje en caso de que lo que ingrese el usuario no pase las validaciones
-/// @param minimo numero int minimo para ingresar
-/// @param maximo numero int maximo para ingresar
-/// @param reintentos cantidad de intentos en caso de no pasar las validaciones
-/// @return retorna -1 en caso de no cumplir con las validaciones en la cantidad de reintentos y 0 en caso positivo
-int utn_getInt(int* pResultado, char* mensaje, char* mensajeError, int minimo, int maximo, int reintentos);
-
 //FUNCION GETINT
 int getInt(int *pNumeroTomado);
 
@@ -74,8 +74,6 @@ int getInt(int *pNumeroTomado);
 int myGets(char* cadena, int tam);
 
 int esNumerica(char cadena[]);
-
-
 
 float utn_getFloatNuevo(float* pResultado, char* mensaje, char* mensajeError, float minimo, float maximo, int reintentos);
 int getFloat(float *pNumeroTomado);

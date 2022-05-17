@@ -47,7 +47,6 @@ void rel_cargaForzada(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayPro
 	arrayUsuarios[3].codPostal=5000;
 	arrayUsuarios[3].isEmpty=ACTIVO;
 
-	/* HARDCODEOS EXTRAS
 	//PRIMER PRODUCTO VENDEDOR JERE
 	arrayProductos[5].idProducto=1100;
 	arrayProductos[5].FK_idVendedor=1;
@@ -89,6 +88,14 @@ void rel_cargaForzada(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayPro
 	arrayProductos[9].categoria=2;
 	arrayProductos[9].stock=10;
 
+	//TERCER PRODUCTO VENDEDOR JERE
+	arrayProductos[10].idProducto=1105;
+	arrayProductos[10].FK_idVendedor=2;
+	arrayProductos[10].isEmpty=OCUPADO;
+	strncpy(arrayProductos[10].nombreProducto,"Michi",25);
+	arrayProductos[10].precio=5000;
+	arrayProductos[10].categoria=2;
+	arrayProductos[10].stock=100;
 	//COMPRA ORI
 	arrayTrackings[5].idTracking=20010;
 	arrayTrackings[5].FK_idProducto=1101;
@@ -118,7 +125,6 @@ void rel_cargaForzada(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayPro
 	arrayTrackings[7].distanciaKm=150;
 	arrayTrackings[7].horaLlegada=1;
 	arrayTrackings[7].isEmpty=ENTREGADO;
-	*/
 }
 
 //2.1 COMPRA
@@ -559,7 +565,7 @@ int rel_ImprimirVentas(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayPr
 	return rtn;
 }
 //B LISTADO PRODUCTOS A LA VENTA
-int rel_ImprimirProductos(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayProductos[], int tam_productos,Tracking arrayTrackings[], int tam_trackings, int FK_idVendedor)
+int rel_ImprimirProductos(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayProductos[], int tam_productos,Tracking arrayTrackings[], int tam_trackings, int FK_idVendedor, int conStock_1_SI_0_NO)
 {
 	int rtn = 0;
 	int i;
@@ -579,15 +585,32 @@ int rel_ImprimirProductos(Usuario* arrayUsuarios, int tam_usuarios,Producto arra
 			}
 			if(contadorProductos>0)
 			{
-				printf("ID  |NOMBRE         |PRECIO   |CATEGORIA           |STOCK |\n");
-				printf("----+---------------+---------+--------------------+--------+");
-				for (i = 0; i < tam_productos; i++)
+				switch(conStock_1_SI_0_NO)
 				{
-					if (arrayProductos[i].FK_idVendedor==auxiliarFK_idVendedor && arrayProductos[i].stock>0)
+				case 0:
+					printf("ID  |NOMBRE         |PRECIO   |CATEGORIA           |STOCK |\n");
+					printf("----+---------------+---------+--------------------+--------+");
+					for (i = 0; i < tam_productos; i++)
 					{
-						eProducto_imprimirUnoAuxiliar(arrayProductos[i]);
-					}
+						if (arrayProductos[i].FK_idVendedor==auxiliarFK_idVendedor && arrayProductos[i].stock>=0)
+						{
+							eProducto_imprimirUnoAuxiliar(arrayProductos[i]);
+						}
 
+					}
+					break;
+				case 1:
+					printf("ID  |NOMBRE         |PRECIO   |CATEGORIA           |STOCK |\n");
+					printf("----+---------------+---------+--------------------+--------+");
+					for (i = 0; i < tam_productos; i++)
+					{
+						if (arrayProductos[i].FK_idVendedor==auxiliarFK_idVendedor && arrayProductos[i].stock>0)
+						{
+							eProducto_imprimirUnoAuxiliar(arrayProductos[i]);
+						}
+
+					}
+					break;
 				}
 			}
 			else
@@ -676,4 +699,61 @@ int rel_Usuario_Baja(Usuario arrayUsuarios[], int tam_arrayUsuarios,Producto arr
 }
 
 
+int rel_ReponerStock(Usuario* arrayUsuarios, int tam_usuarios,Producto arrayProductos[], int tam_productos,Tracking arrayTrackings[], int tam_trackings, int FK_idVendedor)
+{
+	int rtn;
+	int rtnImprimirAuxiliar;
+	int idAuxiliar;
+	int indiceAuxiliar;
+	int stockAgregado;
+	int stockActual;
 
+	if(arrayUsuarios != NULL && arrayProductos != NULL && arrayTrackings != NULL)
+	{
+		if(tam_usuarios>0 && tam_productos >0 && tam_trackings>0)
+		{
+			rtnImprimirAuxiliar=rel_ImprimirProductos(arrayUsuarios, tam_usuarios, arrayProductos, tam_productos, arrayTrackings, tam_trackings, FK_idVendedor,0);
+			if(rtnImprimirAuxiliar==0)
+			{
+				puts("\nFIN DEL LISTADO.");
+				eProductoPedirId(arrayProductos, tam_productos, &idAuxiliar);
+				indiceAuxiliar=eProductoBuscarIndicePorId(arrayProductos, tam_productos, idAuxiliar, 1);
+				if(indiceAuxiliar>=0)
+				{
+					if(utn_getInt(&stockAgregado, "Ingrese la cantidad de producto a agregar", "ERROR,cantidad invalida", 1, 10000, 5)==0)
+					{
+						stockActual=arrayProductos[indiceAuxiliar].stock;
+						stockAgregado=stockActual+stockAgregado;
+						arrayProductos[indiceAuxiliar].stock=stockAgregado;
+					}
+					else
+					{
+						rtn=-5; //ERROR EN INGRESO DE DATOS
+					}
+
+				}
+				else
+				{
+					rtn=-4; //ID INEXISTENTE
+				}
+
+			}
+			else
+			{
+				if(rtnImprimirAuxiliar==-3)
+				{
+					rtn=-3; //NO HAY PROD PARA LISTAR
+				}
+			}
+		}
+		else
+		{
+			rtn=-2; //TAM MAL DEFINIDO
+		}
+	}
+	else
+	{
+	rtn=-1; //ARRAY NULO
+	}
+	return rtn;
+}

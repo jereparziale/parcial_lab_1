@@ -85,7 +85,7 @@ int eTracking_ImprimirAdmin(Tracking arrayTrackings[], int tam)
 					{
 						switch(arrayTrackings[i].isEmpty)
 						{
-						case -1:
+						case -2:
 							strncpy(auxiliarEstado,"CANCELADO",15);
 							break;
 						case 1:
@@ -94,9 +94,6 @@ int eTracking_ImprimirAdmin(Tracking arrayTrackings[], int tam)
 						case 2:
 							strncpy(auxiliarEstado,"EN VIAJE",15);
 							break;
-						default:
-							puts("\nERROR, opcion invalida");
-						break;
 						}
 						printf("\n%-5d|%-10s|%-12d|%-12d|",arrayTrackings[i].idTracking,auxiliarEstado,arrayTrackings[i].FK_idComprador,arrayTrackings[i].FK_idVendedor);
 						contadorTrakings++;

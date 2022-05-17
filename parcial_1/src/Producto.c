@@ -451,3 +451,132 @@ int eProductoOrdenarCategoriaAdmin(Producto arrayProductos[], int tam)
 	}
 	return rtn;
 }
+
+
+int eProductoOrdenarStockAdmin(Producto arrayProductos[], int tam)
+{
+	int rtn=-1;
+	int flagSwap;
+	int flagCantidad=0;
+	int i;
+	int nuevoTam;
+	Producto auxiliarProducto[tam];
+	Producto bufferAux;
+
+	if(arrayProductos != NULL)
+	{
+		if(tam >0)
+		{
+			eProducto_Inicializar(auxiliarProducto, tam);
+
+			for (i = 0; i < tam; i++)
+			{
+
+				if(arrayProductos[i].isEmpty>=0)
+				{
+					auxiliarProducto[i]=arrayProductos[i];
+					flagCantidad=1;
+				}
+			}
+			if(flagCantidad!=0)
+			{
+				do
+				{
+					flagSwap=0;
+					nuevoTam= tam-1;
+					for (i = 0; i < nuevoTam; i++) //hago tam-1 para que no intercambie con una varibale que no existe
+					{
+						if(auxiliarProducto[i].isEmpty>=0 && auxiliarProducto[i+1].isEmpty>=0)
+						{
+							if (auxiliarProducto[i].stock>auxiliarProducto[i+1].stock)
+							{
+								flagSwap=1;
+								bufferAux=auxiliarProducto[i];
+								auxiliarProducto[i]=auxiliarProducto[i+1];
+								auxiliarProducto[i+1]=bufferAux;
+							}
+						}
+					}
+					tam--;
+					rtn=0;
+				}while(flagSwap);
+				puts("\nPRODUCTOS ORDENADOS POR STOCK");
+				eProducto_imprimirTodosEstado(auxiliarProducto, tam, OCUPADO);
+			}
+			else
+			{
+				rtn=-3; //NO HAY PRODUCTOS PARA LISTAR
+			}
+		}
+		else
+		{
+			rtn=-2; //TAM MAL DEFINIDO
+		}
+	}
+	else
+	{
+		rtn=-1; //ARRAY NULO
+	}
+	return rtn;
+}
+
+int eProducto_FiltrarNombre(Producto arrayProductos[], int tam)
+{
+	int rtn = 0;
+	int i;
+	int flag=0;
+	char nombreProducto[25];
+	int flagCoindidencia=0;
+	Producto auxiliarProductos[tam];
+
+	if (arrayProductos != NULL)
+	{
+		if (tam > 0)
+		{
+			eProducto_Inicializar(auxiliarProductos, tam);
+
+			utn_getString(nombreProducto, "Ingrese el nombre del producto a buscar", "ERROR, nombre invalido", 25, 5);
+			for(i=0;i<tam;i++)
+			{
+				if(arrayProductos[i].isEmpty>=0)
+				{
+				flag++;
+				}
+			}
+			if(flag>0)
+			{
+				for (i = 0; i < tam; i++)
+				{
+					if(strncmp(arrayProductos[i].nombreProducto,nombreProducto,sizeof(nombreProducto))==0)
+					{
+						auxiliarProductos[i]=arrayProductos[i];
+						flagCoindidencia++;
+					}
+				}
+				if(eProductoOrdenarStockAdmin(auxiliarProductos, tam)==0)
+				{
+					rtn=0;
+				}
+				else
+				{
+					rtn=-5;//NO EXISTEN COINCIDENCIAS
+				}
+				if(flagCoindidencia<1)
+				{
+					rtn=-4; //NO EXISTEN COINCIDENCIAS
+				}
+			}
+			else
+			{
+				rtn=-3; //NO EXISTEN PRODUCTOS PARA LISTAR
+			}
+		} else
+		{
+			rtn = -2;
+		}
+	} else
+	{
+		rtn = -1;
+	}
+	return rtn;
+}

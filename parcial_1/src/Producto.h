@@ -61,6 +61,11 @@ int eProducto_Baja(Producto arrayProductos[], int i);
 
 int eProductoOrdenarCategoria(Producto arrayProductos[], int tam, int id_FKcomprador);
 int eProductoOrdenarCategoriaAdmin(Producto arrayProductos[], int tam);
+int eProductoOrdenarStock(Producto arrayProductos[], int tam);
+
+int eProducto_FiltrarNombre(Producto arrayProductos[], int tam);
+
+
 
 
 #endif /* PRODUCTO_H_ */
